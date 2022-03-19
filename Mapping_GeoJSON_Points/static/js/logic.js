@@ -1,8 +1,11 @@
 // Add console.log to check to see if our code is working.
 console.log("working");
 
-// Create the map object with center at the San Francisco airport.
-let map = L.map('mapid').setView([37.5, -122.5], 10);
+// // Create the map object with center at the San Francisco airport.
+// let map = L.map('mapid').setView([37.5, -122.5], 10);
+
+// Create the map object with center and zoom level.
+let map = L.map('mapid').setView([30, 30], 2);
 
 // Add GeoJSON data.
 let sanFranAirport =
@@ -27,7 +30,7 @@ let sanFranAirport =
 // // Grabbing our GeoJSON data.
 // L.geoJSON(sanFranAirport).addTo(map);
 
-// Grabbing our GeoJSON data.
+// Grabbing our GeoJSON data. "pointToLayer"
 // L.geoJSON(sanFranAirport, {
 //     // We turn each feature into a marker on the map.
 //     pointToLayer: function(feature, latlng) {
@@ -37,14 +40,14 @@ let sanFranAirport =
 //     }
 // }).addTo(map);
 
-// Grabbing our GeoJSON data.
-L.geoJSON(sanFranAirport, {
-    // We turn each feature into a marker on the map.
-    onEachFeature: function(feature, layer) {
-      console.log(layer);
-      layer.bindPopup("<h2>" + feature.properties.name + "</h2>" + "<hr>" + "<body>" + feature.properties.city + ", " + feature.properties.country + "</body>");
-    }
-}).addTo(map);
+// Grabbing our GeoJSON data. "onEachFeature"
+// L.geoJSON(sanFranAirport, {
+//     // We turn each feature into a marker on the map.
+//     onEachFeature: function(feature, layer) {
+//       console.log(layer);
+//       layer.bindPopup("<h2>" + feature.properties.name + "</h2>" + "<hr>" + "<body>" + feature.properties.city + ", " + feature.properties.country + "</body>");
+//     }
+// }).addTo(map);
 
 // We create the tile layer that will be the background of our map.
 let streets = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/tiles/{z}/{x}/{y}?access_token={accessToken}', {
@@ -55,3 +58,15 @@ let streets = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/navigation-ni
 
 // Then we add our 'graymap' tile layer to the map.
 streets.addTo(map);
+
+// Accessing the airport GeoJSON URL. Load this after the tileLayer so the maps loads before the points
+let airportData = "https://raw.githubusercontent.com/JHPN2/Mapping_Earthquakes/Mapping_GeoJSON_Points/majorAirports.json";
+
+// Grabbing our GeoJSON data.
+d3.json(airportData).then(function(data) {
+    console.log(data);
+  // Creating a GeoJSON layer with the retrieved data.
+  L.geoJSON(data, {onEachFeature: function(feature, layer) {console.log(layer);
+    layer.bindPopup("<h2>" + feature.properties.name + "</h2>" + "<hr>" + "<body>" + feature.properties.city + ", " + feature.properties.country + "</body>");}
+    }).addTo(map);
+});
